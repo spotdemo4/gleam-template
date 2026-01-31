@@ -9,6 +9,19 @@ permissions:
   contents: read
 
 jobs:
+  gleam:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: spotdemo4/nix-init@e33bbfeb90b9958c0ec55db282c93c0c5605f914 # v1.25.2
+        with:
+          shell: vulnerable
+
+      - name: Run go_over
+        run: |
+          gleam build
+          gleam run -m go_over
+
   flake:
     runs-on: ubuntu-latest
     steps:

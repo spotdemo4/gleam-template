@@ -88,6 +88,11 @@
           vulnerable = pkgs.mkShell {
             name = "vulnerable";
             packages = with pkgs; [
+              # gleam
+              gleam
+              beam28Packages.erlang
+              beam28Packages.rebar3
+
               # nix
               flake-checker
 
