@@ -5,7 +5,7 @@
   "onboarding": false,
   "requireConfig": "ignored",
   "platform": "github",
-  "repositories": ["spotdemo4/template"],
+  "repositories": ["spotdemo4/gleam-template"],
 
   // repository
   "extends": ["config:recommended"],
