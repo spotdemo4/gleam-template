@@ -1,0 +1,34 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: release
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: spotdemo4/nix-init@b3297f8312873ecb1f56efc86777c7a164c16e70 # v1.25.0
+        with:
+          app_id: ${{ vars.CLIENT_ID }}
+          app_key: ${{ secrets.PRIVATE_KEY }}
+          fetch_depth: 0
+          shell: release
+
+      - name: Release
+        run: flake-release
+        env:
+          GITHUB_TOKEN: ${{ steps.checkout.outputs.token }}
+          REGISTRY: ghcr.io
+          REGISTRY_USERNAME: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}

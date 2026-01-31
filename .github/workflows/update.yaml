@@ -1,0 +1,28 @@
+name: update
+
+on:
+  schedule:
+    - cron: "0 9 * * *" # every day at 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: spotdemo4/nix-init@b3297f8312873ecb1f56efc86777c7a164c16e70 # v1.25.0
+        with:
+          app_id: ${{ vars.CLIENT_ID }}
+          app_key: ${{ secrets.PRIVATE_KEY }}
+          shell: update
+
+      - name: Renovate
+        run: renovate
+        env:
+          RENOVATE_CONFIG_FILE: .github/renovate.json
+          RENOVATE_TOKEN: ${{ steps.checkout.outputs.token }}
+          LOG_LEVEL: ${{ runner.debug == '1' && 'debug' || 'info' }}
