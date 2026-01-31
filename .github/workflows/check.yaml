@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: spotdemo4/nix-init@b3297f8312873ecb1f56efc86777c7a164c16e70 # v1.25.0
+        uses: spotdemo4/nix-init@53edf99ddf1116ee1a53e7312606e5d1399d37da # v1.25.1
 
       - name: Check
         run: nix flake check
