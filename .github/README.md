@@ -1,9 +1,9 @@
-# template
+# gleam template
 
-[![check](https://img.shields.io/github/actions/workflow/status/spotdemo4/template/check.yaml?branch=main&logo=github&logoColor=%23bac2de&label=check&labelColor=%23313244)](https://github.com/spotdemo4/template/actions/workflows/check.yaml)
-[![vulnerable](https://img.shields.io/github/actions/workflow/status/spotdemo4/template/vulnerable.yaml?branch=main&logo=github&logoColor=%23bac2de&label=vulnerable&labelColor=%23313244)](https://github.com/spotdemo4/template/actions/workflows/vulnerable.yaml)
+[![check](https://img.shields.io/github/actions/workflow/status/spotdemo4/gleam-template/check.yaml?branch=main&logo=github&logoColor=%23bac2de&label=check&labelColor=%23313244)](https://github.com/spotdemo4/gleam-template/actions/workflows/check.yaml)
+[![vulnerable](https://img.shields.io/github/actions/workflow/status/spotdemo4/gleam-template/vulnerable.yaml?branch=main&logo=github&logoColor=%23bac2de&label=vulnerable&labelColor=%23313244)](https://github.com/spotdemo4/gleam-template/actions/workflows/vulnerable.yaml)
 
-default template for projects
+template for starting [gleam](https://gleam.run/) projects
 
 part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 
@@ -27,6 +27,18 @@ or manually enter the development environment:
 nix develop
 ```
 
+### run
+
+```elm
+nix run #run
+```
+
+### build
+
+```elm
+nix build
+```
+
 ### check
 
 ```elm
@@ -40,5 +52,36 @@ releases are automatically created for [significant](https://www.conventionalcom
 to manually create a version bump:
 
 ```elm
-bumper
+bumper action.yaml .github/README.md
+```
+
+## use
+
+### download
+
+| OS      | Architecture | Download                                                                                                                                     |
+| ------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Linux   | amd64        | [go-template_0.5.7_linux_amd64.xz](https://github.com/spotdemo4/go-template/releases/download/v0.5.7/go-template_0.5.7_linux_amd64.xz)       |
+| Linux   | arm64        | [go-template_0.5.7_linux_arm64.xz](https://github.com/spotdemo4/go-template/releases/download/v0.5.7/go-template_0.5.7_linux_arm64.xz)       |
+| Linux   | arm          | [go-template_0.5.7_linux_arm.xz](https://github.com/spotdemo4/go-template/releases/download/v0.5.7/go-template_0.5.7_linux_arm.xz)           |
+| MacOS   | arm64        | [go-template_0.5.7_darwin_arm64.xz](https://github.com/spotdemo4/go-template/releases/download/v0.5.7/go-template_0.5.7_darwin_arm64.xz)     |
+| Windows | amd64        | [go-template_0.5.7_windows_amd64.zip](https://github.com/spotdemo4/go-template/releases/download/v0.5.7/go-template_0.5.7_windows_amd64.zip) |
+
+### docker
+
+```elm
+docker run ghcr.io/spotdemo4/gleam-template:0.0.1
+```
+
+### action
+
+```yaml
+- name: gleam template
+  uses: spotdemo4/gleam-template@v0.0.1
+```
+
+### nix
+
+```elm
+nix run github:spotdemo4/gleam-template
 ```

@@ -6,6 +6,11 @@
     ".envrc": "dotenv"
   },
 
+  // gleam
+  "[gleam]": {
+    "editor.defaultFormatter": "gleam.gleam"
+  },
+
   // nix
   "nix.enableLanguageServer": true,
   "nix.serverPath": "nixd",

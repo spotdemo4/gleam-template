@@ -1,0 +1,7 @@
+name: gleam template
+description: a template for gleam projects
+author: trev
+
+runs:
+  using: docker
+  image: docker://ghcr.io/spotdemo4/gleam-template:0.0.1

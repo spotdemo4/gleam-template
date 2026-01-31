@@ -2,6 +2,9 @@
 /.envrc
 /docker-compose*
 
+# gleam
+/build/
+
 # nix
 /result*
 /.direnv/

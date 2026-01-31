@@ -1,5 +1,5 @@
 {
-  description = "template";
+  description = "gleam template";
 
   nixConfig = {
     extra-substituters = [
@@ -18,12 +18,17 @@
       inputs.systems.follows = "systems";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-gleam = {
+      url = "github:arnarg/nix-gleam";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     {
       nixpkgs,
       trev,
+      nix-gleam,
       ...
     }:
     trev.libs.mkFlake (
@@ -34,16 +39,21 @@
           overlays = [
             trev.overlays.packages
             trev.overlays.libs
+            nix-gleam.overlays.default
           ];
         };
         fs = pkgs.lib.fileset;
       in
-      {
+      rec {
         devShells = {
           default = pkgs.mkShell {
             name = "dev";
             shellHook = pkgs.shellhook.ref;
             packages = with pkgs; [
+              gleam
+              beam28Packages.erlang
+              beam28Packages.rebar3
+
               # formatters
               nixfmt
               prettier
@@ -88,6 +98,15 @@
         };
 
         checks = pkgs.lib.mkChecks {
+          gleam = {
+            src = packages.default;
+            script = ''
+              gleam check
+              gleam format --check
+              gleam test
+            '';
+          };
+
           actions = {
             src = fs.toSource {
               root = ./.;
@@ -140,6 +159,63 @@
             script = ''
               prettier --check .
             '';
+          };
+        };
+
+        apps = pkgs.lib.mkApps {
+          run.script = "gleam run";
+          dev.script = "gleam dev";
+        };
+
+        packages = with pkgs.lib; rec {
+          default = pkgs.buildGleamApplication rec {
+            pname = "gleam-template";
+            version = "0.0.1";
+
+            src = fs.toSource {
+              root = ./.;
+              fileset = fs.unions [
+                ./gleam.toml
+                ./manifest.toml
+                (fs.fileFilter (file: file.hasExt "gleam") ./.)
+              ];
+            };
+
+            target = "erlang";
+            erlangPackage = pkgs.beam28Packages.erlang;
+            rebar3Package = pkgs.beam28Packages.rebar3;
+
+            meta = {
+              description = "gleam template";
+              mainProgram = "template";
+              homepage = "https://github.com/spotdemo4/gleam-template";
+              changelog = "https://github.com/spotdemo4/gleam-template/releases/tag/v${version}";
+              license = licenses.mit;
+              platforms = platforms.all;
+            };
+          };
+
+          image = makeOverridable pkgs.dockerTools.buildLayeredImage {
+            name = default.pname;
+            tag = default.version;
+
+            contents = with pkgs; [
+              dockerTools.caCertificates
+            ];
+
+            created = "now";
+            meta = default.meta;
+
+            config = {
+              Cmd = [ "${meta.getExe default}" ];
+              Labels = {
+                "org.opencontainers.image.title" = default.pname;
+                "org.opencontainers.image.description" = default.meta.description;
+                "org.opencontainers.image.version" = default.version;
+                "org.opencontainers.image.source" = default.meta.homepage;
+                "org.opencontainers.image.licenses" = default.meta.license.spdxId;
+              };
+            };
           };
         };
 

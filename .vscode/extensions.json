@@ -1,3 +1,7 @@
 {
-  "recommendations": ["jnoortheen.nix-ide", "prettier.prettier-vscode"]
+  "recommendations": [
+    "gleam.gleam",
+    "jnoortheen.nix-ide",
+    "prettier.prettier-vscode"
+  ]
 }
