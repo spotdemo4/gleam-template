@@ -59,7 +59,7 @@ bumper action.yaml .github/README.md
 
 ### download
 
-[releases](/releases)
+[releases](https://github.com/spotdemo4/gleam-template/releases/latest)
 
 ### docker
 
