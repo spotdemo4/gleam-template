@@ -18,9 +18,7 @@ jobs:
           shell: vulnerable
 
       - name: Run go_over
-        run: |
-          gleam build
-          gleam run -m go_over
+        run: go_over
 
   flake:
     runs-on: ubuntu-latest

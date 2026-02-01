@@ -18,17 +18,12 @@
       inputs.systems.follows = "systems";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-gleam = {
-      url = "github:arnarg/nix-gleam";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
     {
       nixpkgs,
       trev,
-      nix-gleam,
       ...
     }:
     trev.libs.mkFlake (
@@ -39,7 +34,6 @@
           overlays = [
             trev.overlays.packages
             trev.overlays.libs
-            nix-gleam.overlays.default
           ];
         };
         fs = pkgs.lib.fileset;
@@ -89,9 +83,7 @@
             name = "vulnerable";
             packages = with pkgs; [
               # gleam
-              gleam
-              beam28Packages.erlang
-              beam28Packages.rebar3
+              go-over
 
               # nix
               flake-checker
@@ -173,7 +165,7 @@
         };
 
         packages = with pkgs.lib; rec {
-          default = pkgs.buildGleamApplication rec {
+          default = gleam.build rec {
             pname = "gleam-template";
             version = "0.0.1";
 

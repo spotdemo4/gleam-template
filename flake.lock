@@ -1,25 +1,5 @@
 {
   "nodes": {
-    "nix-gleam": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1766688795,
-        "narHash": "sha256-v2ICvF6VzwEzVX5qVUs/KuOfqPqjOq+NpmsI3j1zEF8=",
-        "owner": "arnarg",
-        "repo": "nix-gleam",
-        "rev": "fd6945ed3919b87a0edcc791f3a91b43cf25a371",
-        "type": "github"
-      },
-      "original": {
-        "owner": "arnarg",
-        "repo": "nix-gleam",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1769740369,
@@ -38,7 +18,6 @@
     },
     "root": {
       "inputs": {
-        "nix-gleam": "nix-gleam",
         "nixpkgs": "nixpkgs",
         "systems": "systems",
         "trev": "trev"
@@ -69,11 +48,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769888072,
-        "narHash": "sha256-AblWLV0JoiEkqZE8svy8PWyHMkDY4Bs8M02Nk1MyXNk=",
+        "lastModified": 1769924456,
+        "narHash": "sha256-gZ8f2OJiVcxAzh3AUKxYwhvNkbLsgrAGBC1j8hc492Q=",
         "owner": "spotdemo4",
         "repo": "nur",
-        "rev": "2ecf053245ce732eff877d81625556448ea11f83",
+        "rev": "2a8df842e095879a9f639ac24e0e658f80e4fae9",
         "type": "github"
       },
       "original": {
