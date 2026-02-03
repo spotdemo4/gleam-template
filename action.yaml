@@ -4,4 +4,4 @@ author: trev
 
 runs:
   using: docker
-  image: docker://ghcr.io/spotdemo4/gleam-template:0.0.1
+  image: docker://ghcr.io/spotdemo4/gleam-template:0.1.0
