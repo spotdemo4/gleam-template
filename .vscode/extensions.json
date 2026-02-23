@@ -2,6 +2,6 @@
   "recommendations": [
     "gleam.gleam",
     "jnoortheen.nix-ide",
-    "prettier.prettier-vscode"
+    "esbenp.prettier-vscode"
   ]
 }

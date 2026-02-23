@@ -44,6 +44,7 @@
             name = "dev";
             shellHook = pkgs.shellhook.ref;
             packages = with pkgs; [
+              # gleam
               gleam
               beam28Packages.erlang
               beam28Packages.rebar3
@@ -76,6 +77,11 @@
             name = "update";
             packages = with pkgs; [
               renovate
+
+              # gleam
+              gleam
+              beam28Packages.erlang
+              beam28Packages.rebar3
             ];
           };
 
