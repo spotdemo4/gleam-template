@@ -37,6 +37,7 @@ jobs:
       - name: Bump
         run: bumper
         env:
+          GITHUB_TOKEN: ${{ steps.init.outputs.token }}
           FORCE: ${{ inputs.force }}
           PATHS: |-
             .github/README.md
