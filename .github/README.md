@@ -64,14 +64,14 @@ bumper action.yaml .github/README.md
 ### docker
 
 ```elm
-docker run ghcr.io/spotdemo4/gleam-template:0.1.0
+docker run ghcr.io/spotdemo4/gleam-template:0.1.1
 ```
 
 ### action
 
 ```yaml
 - name: gleam template
-  uses: spotdemo4/gleam-template@v0.1.0
+  uses: spotdemo4/gleam-template@v0.1.1
 ```
 
 ### nix
