@@ -155,6 +155,7 @@
                 ./test
               ];
             };
+            erlangPackage = pkgs.beamMinimalPackages.erlang;
 
             meta = {
               mainProgram = "template";
