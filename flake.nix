@@ -79,9 +79,9 @@
           };
         };
 
-        checks = pkgs.lib.mkChecks {
+        checks = pkgs.mkChecks {
           gleam = {
-            src = self.${system}.packages.default;
+            src = self.packages.${system}.default;
             script = ''
               gleam check
               gleam format --check
@@ -136,7 +136,7 @@
           };
         };
 
-        apps = pkgs.lib.mkApps {
+        apps = pkgs.mkApps {
           run = "gleam run";
           dev = "gleam dev";
         };
@@ -152,6 +152,7 @@
                 ./gleam.toml
                 ./manifest.toml
                 ./src
+                ./test
               ];
             };
 
