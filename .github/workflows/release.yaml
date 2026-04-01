@@ -15,7 +15,12 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+    runs-on: ${{ matrix.image }}
     steps:
       - id: checkout
         name: Checkout
@@ -33,4 +38,7 @@ jobs:
           REGISTRY: ghcr.io
           REGISTRY_USERNAME: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-          BUNDLE: appimage
+          BUNDLE: AppImage
+          PACKAGES: |-
+            packages.${{ steps.init.outputs.system }}.default
+            images.${{ steps.init.outputs.system }}.default

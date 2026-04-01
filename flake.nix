@@ -22,23 +22,12 @@
 
   outputs =
     {
-      nixpkgs,
+      self,
       trev,
       ...
     }:
     trev.libs.mkFlake (
-      system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [
-            trev.overlays.packages
-            trev.overlays.libs
-          ];
-        };
-        fs = pkgs.lib.fileset;
-      in
-      rec {
+      system: pkgs: {
         devShells = {
           default = pkgs.mkShell {
             shellHook = pkgs.shellhook.ref;
@@ -48,7 +37,7 @@
               beam28Packages.erlang
               beam28Packages.rebar3
 
-              # formatters
+              # format
               nixfmt
               prettier
 
@@ -83,21 +72,16 @@
 
           vulnerable = pkgs.mkShell {
             packages = with pkgs; [
-              # gleam
-              go-over
-
-              # nix
-              flake-checker
-
-              # actions
-              octoscan
+              go-over # gleam
+              flake-checker # nix
+              octoscan # actions
             ];
           };
         };
 
         checks = pkgs.lib.mkChecks {
           gleam = {
-            src = packages.default;
+            src = self.${system}.packages.default;
             script = ''
               gleam check
               gleam format --check
@@ -106,25 +90,21 @@
           };
 
           actions = {
-            src = fs.toSource {
-              root = ./.;
-              fileset = ./.github/workflows;
-            };
+            root = ./.;
+            fileset = ./.github/workflows;
             deps = with pkgs; [
               action-validator
               octoscan
             ];
-            script = ''
-              action-validator **/*.yaml
-              octoscan scan .
+            forEach = ''
+              action-validator "$file"
+              octoscan scan "$file"
             '';
           };
 
           renovate = {
-            src = fs.toSource {
-              root = ./.github;
-              fileset = ./.github/renovate.json;
-            };
+            root = ./.github;
+            fileset = ./.github/renovate.json;
             deps = with pkgs; [
               renovate
             ];
@@ -134,90 +114,66 @@
           };
 
           nix = {
-            src = fs.toSource {
-              root = ./.;
-              fileset = fs.fileFilter (file: file.hasExt "nix") ./.;
-            };
+            root = ./.;
+            filter = file: file.hasExt "nix";
             deps = with pkgs; [
-              nixfmt-tree
+              nixfmt
             ];
-            script = ''
-              treefmt --ci
+            forEach = ''
+              nixfmt --check "$file"
             '';
           };
 
           prettier = {
-            src = fs.toSource {
-              root = ./.;
-              fileset = fs.fileFilter (file: file.hasExt "yaml" || file.hasExt "json" || file.hasExt "md") ./.;
-            };
+            root = ./.;
+            filter = file: file.hasExt "yaml" || file.hasExt "json" || file.hasExt "md";
             deps = with pkgs; [
               prettier
             ];
-            script = ''
-              prettier --check .
+            forEach = ''
+              prettier --check "$file"
             '';
           };
         };
 
         apps = pkgs.lib.mkApps {
-          run.script = "gleam run";
-          dev.script = "gleam dev";
+          run = "gleam run";
+          dev = "gleam dev";
         };
 
-        packages = with pkgs.lib; rec {
-          default = gleam.build rec {
+        packages = {
+          default = pkgs.buildGleamApplication (finalAttrs: {
             pname = "gleam-template";
             version = "0.0.1";
 
-            src = fs.toSource {
+            src = pkgs.lib.fileset.toSource {
               root = ./.;
-              fileset = fs.unions [
+              fileset = pkgs.lib.fileset.unions [
                 ./gleam.toml
                 ./manifest.toml
-                (fs.fileFilter (file: file.hasExt "gleam") ./.)
+                ./src
               ];
             };
 
-            target = "erlang";
-            erlangPackage = pkgs.beam28Packages.erlang;
-            rebar3Package = pkgs.beam28Packages.rebar3;
-
             meta = {
-              description = "gleam template";
               mainProgram = "template";
+              description = "A template for gleam projects.";
+              license = pkgs.lib.licenses.mit;
+              platforms = pkgs.lib.platforms.all;
               homepage = "https://github.com/spotdemo4/gleam-template";
-              changelog = "https://github.com/spotdemo4/gleam-template/releases/tag/v${version}";
-              license = licenses.mit;
-              platforms = platforms.all;
+              changelog = "https://github.com/spotdemo4/gleam-template/releases/tag/v${finalAttrs.version}";
             };
-          };
+          });
+        };
 
-          image = makeOverridable pkgs.dockerTools.buildLayeredImage {
-            name = default.pname;
-            tag = default.version;
-
-            contents = with pkgs; [
-              dockerTools.caCertificates
-            ];
-
-            created = "now";
-            meta = default.meta;
-
-            config = {
-              Cmd = [ "${meta.getExe default}" ];
-              Labels = {
-                "org.opencontainers.image.title" = default.pname;
-                "org.opencontainers.image.description" = default.meta.description;
-                "org.opencontainers.image.version" = default.version;
-                "org.opencontainers.image.source" = default.meta.homepage;
-                "org.opencontainers.image.licenses" = default.meta.license.spdxId;
-              };
-            };
+        images = {
+          default = pkgs.mkImage self.packages.${system}.default {
+            contents = with pkgs; [ dockerTools.caCertificates ];
           };
         };
 
         formatter = pkgs.nixfmt-tree;
+        schemas = trev.schemas;
       }
     );
 }
