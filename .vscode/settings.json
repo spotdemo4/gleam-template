@@ -19,5 +19,10 @@
   },
 
   // actions
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // json
+  "json.schemaDownload.trustedDomains": {
+    "https://docs.renovatebot.com/": true
+  }
 }

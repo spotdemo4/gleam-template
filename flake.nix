@@ -79,6 +79,11 @@
           };
         };
 
+        apps = pkgs.mkApps {
+          default = "gleam run";
+          dev = "gleam dev";
+        };
+
         checks = pkgs.mkChecks {
           gleam = {
             src = self.packages.${system}.default;
@@ -91,8 +96,8 @@
 
           actions = {
             root = ./.;
-            fileset = ./.github/workflows;
-            deps = with pkgs; [
+            files = ./.github/workflows;
+            packages = with pkgs; [
               action-validator
               octoscan
             ];
@@ -104,8 +109,8 @@
 
           renovate = {
             root = ./.github;
-            fileset = ./.github/renovate.json;
-            deps = with pkgs; [
+            files = ./.github/renovate.json;
+            packages = with pkgs; [
               renovate
             ];
             script = ''
@@ -116,7 +121,7 @@
           nix = {
             root = ./.;
             filter = file: file.hasExt "nix";
-            deps = with pkgs; [
+            packages = with pkgs; [
               nixfmt
             ];
             forEach = ''
@@ -127,7 +132,7 @@
           prettier = {
             root = ./.;
             filter = file: file.hasExt "yaml" || file.hasExt "json" || file.hasExt "md";
-            deps = with pkgs; [
+            packages = with pkgs; [
               prettier
             ];
             forEach = ''
@@ -136,45 +141,59 @@
           };
         };
 
-        apps = pkgs.mkApps {
-          run = "gleam run";
-          dev = "gleam dev";
+        formatter = pkgs.treefmt.withConfig {
+          configFile = ./treefmt.toml;
+          runtimeInputs = with pkgs; [
+            gleam
+            nixfmt
+            prettier
+          ];
         };
 
-        packages = {
-          default = pkgs.buildGleamApplication (finalAttrs: {
+        packages.default = pkgs.stdenv.mkDerivation (
+          final: with pkgs.lib; {
             pname = "gleam-template";
             version = "0.1.1";
 
-            src = pkgs.lib.fileset.toSource {
+            src = fileset.toSource {
               root = ./.;
-              fileset = pkgs.lib.fileset.unions [
+              fileset = fileset.unions [
                 ./gleam.toml
                 ./manifest.toml
                 ./src
                 ./test
               ];
             };
-            erlangPackage = pkgs.beamMinimalPackages.erlang;
+
+            gleamDeps = pkgs.gleamFetchDeps {
+              inherit (final) pname version src;
+              hash = "sha256-KqMwVaZveYR+GWV4XIIprmQ1BemkCV8PeCHg/qyf6uM=";
+            };
+
+            nativeBuildInputs = with pkgs; [
+              gleamErlangHook
+            ];
 
             meta = {
               mainProgram = "template";
-              description = "A template for gleam projects.";
-              license = pkgs.lib.licenses.mit;
-              platforms = pkgs.lib.platforms.all;
+              description = "A template for gleam projects";
+              license = licenses.mit;
+              platforms = platforms.all;
+              badPlatforms = [ systems.inspect.platformPatterns.isStatic ];
               homepage = "https://github.com/spotdemo4/gleam-template";
-              changelog = "https://github.com/spotdemo4/gleam-template/releases/tag/v${finalAttrs.version}";
+              changelog = "https://github.com/spotdemo4/gleam-template/releases/tag/v${final.version}";
             };
-          });
+          }
+        );
+
+        images.default = pkgs.mkImage {
+          src = self.packages.${system}.default;
         };
 
-        images = {
-          default = pkgs.mkImage self.packages.${system}.default {
-            contents = with pkgs; [ dockerTools.caCertificates ];
-          };
+        appimages.default = pkgs.mkAppImage {
+          src = self.packages.${system}.default;
         };
 
-        formatter = pkgs.nixfmt-tree;
         schemas = trev.schemas;
       }
     );
