@@ -57,14 +57,14 @@ releases are automatically created for [significant](https://www.conventionalcom
 
 | Architecture | Download                                                                                                                                        |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| amd64        | [gleam-template_0.1.1_amd64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.1.1/gleam-template_0.1.1_amd64.AppImage) |
-| arm64        | [gleam-template_0.1.1_arm64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.1.1/gleam-template_0.1.1_arm64.AppImage) |
-| arm          | [gleam-template_0.1.1_arm.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.1.1/gleam-template_0.1.1_arm.AppImage)     |
+| amd64        | [gleam-template_0.1.2_amd64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.1.2/gleam-template_0.1.2_amd64.AppImage) |
+| arm64        | [gleam-template_0.1.2_arm64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.1.2/gleam-template_0.1.2_arm64.AppImage) |
+| arm          | [gleam-template_0.1.2_arm.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.1.2/gleam-template_0.1.2_arm.AppImage)     |
 
 ### docker
 
 ```elm
-docker run ghcr.io/spotdemo4/gleam-template:0.1.1
+docker run ghcr.io/spotdemo4/gleam-template:0.1.2
 ```
 
 ### nix
@@ -76,5 +76,5 @@ nix run github:spotdemo4/gleam-template
 ### action
 
 ```yaml
-- uses: spotdemo4/gleam-template@v0.1.1
+- uses: spotdemo4/gleam-template@v0.1.2
 ```
