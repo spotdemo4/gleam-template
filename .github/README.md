@@ -5,7 +5,7 @@
 [![nix](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fspotdemo4%2Fgleam-template%2Frefs%2Fheads%2Fmain%2Fflake.lock&query=%24.nodes.nixpkgs.original.ref&logo=nixos&logoColor=%23bac2de&label=channel&labelColor=%23313244&color=%234d6fb7)](https://nixos.org/)
 [![flakehub](https://img.shields.io/endpoint?url=https://flakehub.com/f/spotdemo4/gleam-template/badge&labelColor=%23313244)](https://flakehub.com/flake/spotdemo4/gleam-template)
 
-template for starting [gleam](https://gleam.run/) projects
+template for starting [Gleam](https://gleam.run/) projects
 
 part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 
