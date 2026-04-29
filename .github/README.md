@@ -46,7 +46,7 @@ nix build
 ### release
 
 ```elm
-bumper "action.yaml" ".github/README.md"
+bumper ".github/README.md"
 ```
 
 releases are automatically created for [significant](https://www.conventionalcommits.org/en/v1.0.0/#summary) changes
@@ -71,10 +71,4 @@ docker run ghcr.io/spotdemo4/gleam-template:0.1.2
 
 ```elm
 nix run github:spotdemo4/gleam-template
-```
-
-### action
-
-```yaml
-- uses: spotdemo4/gleam-template@v0.1.2
 ```

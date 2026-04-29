@@ -1,4 +1,5 @@
 {
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "files.associations": {
     "renovate.json": "jsonc",
@@ -6,23 +7,25 @@
     ".envrc": "dotenv"
   },
 
-  // gleam
-  "[gleam]": {
-    "editor.defaultFormatter": "gleam.gleam"
-  },
-
   // nix
-  "nix.enableLanguageServer": true,
-  "nix.serverPath": "nixd",
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
   },
-
-  // actions
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "nix.serverSettings": {
+    "nixd": {
+      "nixpkgs": {
+        "expr": "(builtins.getFlake (builtins.toString ./.)).outputs.nixpkgs.${builtins.currentSystem}"
+      }
+    }
+  },
 
   // json
   "json.schemaDownload.trustedDomains": {
     "https://docs.renovatebot.com/": true
+  },
+
+  // gleam
+  "[gleam]": {
+    "editor.defaultFormatter": "gleam.gleam"
   }
 }

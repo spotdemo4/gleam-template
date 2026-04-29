@@ -9,20 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  gleam:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: Initialize
-        uses: spotdemo4/nix-init@78cb37091fca621cf273ed076027ebfbaf906457 # v1.44.2
-        with:
-          shell: vulnerable
-
-      - name: Run go_over
-        run: go_over
-
-  flake:
+  nix:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -47,3 +34,16 @@ jobs:
 
       - name: Run zizmor
         run: zizmor .github
+
+  gleam:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@78cb37091fca621cf273ed076027ebfbaf906457 # v1.44.2
+        with:
+          shell: vulnerable
+
+      - name: Run go_over
+        run: go_over

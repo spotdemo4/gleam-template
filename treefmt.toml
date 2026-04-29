@@ -1,13 +1,15 @@
-[formatter.gleam]
-command = "gleam"
-options = ["format"]
-includes = ["*.gleam"]
-
-[formatter.nix]
-command = "nixfmt"
-includes = ["*.nix"]
+#:schema https://www.schemastore.org/treefmt.json
 
 [formatter.prettier]
 command = "prettier"
 options = ["--write"]
 includes = ["*.yaml", "*.md"]
+
+[formatter.nix]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.gleam]
+command = "gleam"
+options = ["format"]
+includes = ["*.gleam"]
