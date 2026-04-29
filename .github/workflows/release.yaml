@@ -12,8 +12,8 @@ permissions:
   contents: read
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
+  amd64-linux:
+    runs-on: ubuntu-24.04
     permissions:
       id-token: write
       contents: write
@@ -30,14 +30,31 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PACKAGES: |
-            appimages.x86_64-linux.default.aarch64-unknown-linux-gnu
-            appimages.x86_64-linux.default.armv7l-unknown-linux-gnueabihf
-            appimages.x86_64-linux.default.x86_64-unknown-linux-gnu
-            images.x86_64-linux.default.aarch64-unknown-linux-gnu
-            images.x86_64-linux.default.armv7l-unknown-linux-gnueabihf
-            images.x86_64-linux.default.x86_64-unknown-linux-gnu
+            appimages.x86_64-linux.default
+            images.x86_64-linux.default
 
       - name: Release to FlakeHub
         uses: DeterminateSystems/flakehub-push@71f57208810a5d299fc6545350981de98fdbc860 # v6
         with:
           visibility: public
+
+  arm64-linux:
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@78cb37091fca621cf273ed076027ebfbaf906457 # v1.44.2
+        with:
+          fetch_depth: 0
+          shell: release
+
+      - name: Release to GitHub
+        run: flake-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGES: |
+            appimages.aarch64-linux.default
+            images.aarch64-linux.default
