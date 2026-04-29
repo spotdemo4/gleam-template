@@ -39,6 +39,9 @@
               erlang
               rebar3
 
+              # lint
+              nixd
+
               # format
               treefmt
               prettier
