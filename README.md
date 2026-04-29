@@ -59,7 +59,6 @@ releases are automatically created for [significant](https://www.conventionalcom
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | amd64        | [gleam-template_0.2.1_amd64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.2.1/gleam-template_0.2.1_amd64.AppImage) |
 | arm64        | [gleam-template_0.2.1_arm64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.2.1/gleam-template_0.2.1_arm64.AppImage) |
-| arm          | [gleam-template_0.2.1_arm.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.2.1/gleam-template_0.2.1_arm.AppImage)     |
 
 ### docker
 
