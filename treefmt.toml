@@ -3,7 +3,7 @@
 [formatter.prettier]
 command = "prettier"
 options = ["--write"]
-includes = ["*.yaml", "*.md"]
+includes = ["*.yaml", "*.json", "*.md"]
 
 [formatter.nix]
 command = "nixfmt"
