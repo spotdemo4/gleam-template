@@ -57,14 +57,14 @@ releases are automatically created for [significant](https://www.conventionalcom
 
 | Architecture | Download                                                                                                                                        |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| amd64        | [gleam-template_0.1.2_amd64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.1.2/gleam-template_0.1.2_amd64.AppImage) |
-| arm64        | [gleam-template_0.1.2_arm64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.1.2/gleam-template_0.1.2_arm64.AppImage) |
-| arm          | [gleam-template_0.1.2_arm.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.1.2/gleam-template_0.1.2_arm.AppImage)     |
+| amd64        | [gleam-template_0.2.0_amd64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.2.0/gleam-template_0.2.0_amd64.AppImage) |
+| arm64        | [gleam-template_0.2.0_arm64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.2.0/gleam-template_0.2.0_arm64.AppImage) |
+| arm          | [gleam-template_0.2.0_arm.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.2.0/gleam-template_0.2.0_arm.AppImage)     |
 
 ### docker
 
 ```elm
-docker run ghcr.io/spotdemo4/gleam-template:0.1.2
+docker run ghcr.io/spotdemo4/gleam-template:0.2.0
 ```
 
 ### nix
