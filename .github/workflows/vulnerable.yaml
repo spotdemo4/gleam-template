@@ -9,8 +9,21 @@ permissions:
   contents: read
 
 jobs:
+  gleam:
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+    steps:
+      - name: Initialize
+        uses: spotdemo4/nix-init@b0b33f024c18fa92f42f732e2e2001de507210cd # v1.45.0
+        with:
+          shell: vulnerable
+
+      - name: Run go_over
+        run: go_over
+
   nix:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       id-token: write
     steps:
@@ -23,7 +36,7 @@ jobs:
         run: flake-checker -f
 
   actions:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       id-token: write
     steps:
@@ -34,16 +47,3 @@ jobs:
 
       - name: Run zizmor
         run: zizmor .github
-
-  gleam:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: Initialize
-        uses: spotdemo4/nix-init@b0b33f024c18fa92f42f732e2e2001de507210cd # v1.45.0
-        with:
-          shell: vulnerable
-
-      - name: Run go_over
-        run: go_over

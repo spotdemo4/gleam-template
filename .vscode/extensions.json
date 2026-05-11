@@ -1,7 +1,3 @@
 {
-  "recommendations": [
-    "esbenp.prettier-vscode",
-    "jnoortheen.nix-ide",
-    "gleam.gleam"
-  ]
+  "recommendations": ["gleam.gleam", "oxc.oxc-vscode", "jnoortheen.nix-ide", "tombi-toml.tombi"]
 }

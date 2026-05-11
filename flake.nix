@@ -13,8 +13,8 @@
   inputs = {
     systems.url = "github:spotdemo4/systems";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    trev = {
-      url = "github:spotdemo4/nur";
+    trevpkgs = {
+      url = "github:spotdemo4/trevpkgs";
       inputs.systems.follows = "systems";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -23,10 +23,10 @@
   outputs =
     {
       self,
-      trev,
+      trevpkgs,
       ...
     }:
-    trev.libs.mkFlake (
+    trevpkgs.libs.mkFlake (
       system: pkgs: {
 
         # nix develop [#...]
@@ -41,14 +41,16 @@
 
               # lint
               nixd
+              nil
 
               # format
-              treefmt
-              prettier
+              oxfmt
               nixfmt
+              treefmt
 
               # util
               bumper
+              fix-hash
             ];
           };
 
@@ -67,6 +69,7 @@
           update = pkgs.mkShell {
             packages = with pkgs; [
               renovate
+              fix-hash # gleamDeps
 
               # gleam
               gleam
@@ -77,16 +80,15 @@
 
           vulnerable = pkgs.mkShell {
             packages = with pkgs; [
+              go-over # gleam
               flake-checker # nix
               zizmor # actions
-              go-over # gleam
             ];
           };
         };
 
         # nix run [#...]
         apps = pkgs.mkApps {
-          default = "gleam run";
           dev = "gleam dev";
         };
 
@@ -111,14 +113,19 @@
                 inherit (final) pname version src;
                 hash = "sha256-KqMwVaZveYR+GWV4XIIprmQ1BemkCV8PeCHg/qyf6uM=";
               };
-
               nativeBuildInputs = with pkgs; [
                 gleamErlangHook
               ];
 
+              checkPhase = ''
+                gleam format --check
+                gleam check
+                gleam test
+              '';
+
               meta = {
                 mainProgram = "template";
-                description = "A template for gleam projects";
+                description = "A template for Gleam projects";
                 license = licenses.mit;
                 platforms = platforms.all;
                 badPlatforms = [ systems.inspect.platformPatterns.isStatic ];
@@ -147,22 +154,18 @@
         formatter = pkgs.treefmt.withConfig {
           configFile = ./treefmt.toml;
           runtimeInputs = with pkgs; [
-            prettier
-            nixfmt
             gleam
+            nixfmt
+            oxfmt
           ];
         };
 
         # nix flake check
         checks = pkgs.mkChecks {
-          prettier = {
-            root = ./.;
-            filter = file: file.hasExt "yaml" || file.hasExt "json" || file.hasExt "md";
-            packages = with pkgs; [
-              prettier
-            ];
-            forEach = ''
-              prettier --check "$file"
+          gleam = self.packages.${system}.default.overrideAttrs {
+            dontBuild = true;
+            installPhase = ''
+              touch $out
             '';
           };
 
@@ -172,7 +175,7 @@
             packages = with pkgs; [
               nixfmt
             ];
-            forEach = ''
+            script = ''
               nixfmt --check "$file"
             '';
           };
@@ -184,7 +187,7 @@
               action-validator
               zizmor
             ];
-            forEach = ''
+            script = ''
               action-validator "$file"
               zizmor --offline "$file"
             '';
@@ -201,12 +204,14 @@
             '';
           };
 
-          gleam = {
-            src = self.packages.${system}.default;
+          config = {
+            root = ./.;
+            filter = file: file.hasExt "json" || file.hasExt "yaml" || file.hasExt "toml" || file.hasExt "md";
+            packages = with pkgs; [
+              oxfmt
+            ];
             script = ''
-              gleam check
-              gleam format --check
-              gleam test
+              oxfmt --check
             '';
           };
         };
