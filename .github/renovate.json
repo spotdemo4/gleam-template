@@ -36,6 +36,12 @@
     },
     {
       "matchManagers": ["gleam"],
+      "postUpgradeTasks": {
+        "commands": ["fix-hash .#default"]
+      }
+    },
+    {
+      "matchManagers": ["gleam"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "hex packages"
     }
