@@ -111,7 +111,7 @@
 
               gleamDeps = pkgs.gleamFetchDeps {
                 inherit (final) pname version src;
-                hash = "sha256-ON85YugbjwBv72Q0M/2y23QM+VtdA9qFNS0WU4i32Yw=";
+                hash = "sha256-cIEdesu8LwaaybC5KL/tU3Dk7xW0K31N7YqMcKbVQpM=";
               };
               nativeBuildInputs = with pkgs; [
                 gleamErlangHook
