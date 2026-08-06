@@ -88,11 +88,6 @@
           };
         };
 
-        # nix run [#...]
-        apps = pkgs.mkApps {
-          dev = "gleam dev";
-        };
-
         # nix build [#...]
         packages = {
           default = pkgs.stdenv.mkDerivation (
