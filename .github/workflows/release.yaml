@@ -30,10 +30,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PACKAGES: |
-            appimages.x86_64-linux.default.aarch64-unknown-linux-gnu
-            appimages.x86_64-linux.default.armv7l-unknown-linux-gnueabihf
-            appimages.x86_64-linux.default.x86_64-unknown-linux-gnu
-            images.x86_64-linux.default.aarch64-unknown-linux-gnu
-            images.x86_64-linux.default.armv7l-unknown-linux-gnueabihf
+            packages.x86_64-linux.burrito.x86_64-unknown-linux-gnu
             images.x86_64-linux.default.x86_64-unknown-linux-gnu
-            packages.x86_64-linux.burrito
