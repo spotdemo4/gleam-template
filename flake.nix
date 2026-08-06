@@ -93,7 +93,7 @@
           default = pkgs.stdenv.mkDerivation (
             final: with pkgs.lib; {
               pname = "gleam-template";
-              version = "0.4.0";
+              version = "0.5.0";
 
               src = fileset.toSource {
                 root = ./.;
