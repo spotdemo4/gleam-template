@@ -42,8 +42,6 @@ jobs:
   gleam:
     # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
-    permissions:
-      id-token: write
     steps:
       - name: Initialize
         uses: spotdemo4/nix-init@3111d9c56193a4983beca8b41a2e0835678abcaa # v1.63.0
