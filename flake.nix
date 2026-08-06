@@ -37,7 +37,7 @@
               # gleam
               gleam
               beamPackages.erlang
-              rebar3
+              beamPackages.rebar3
 
               vscode-json-languageserver # json
               yaml-language-server # yaml
@@ -74,8 +74,8 @@
 
               # gleam
               gleam
-              erlang
-              rebar3
+              beamPackages.erlang
+              beamPackages.rebar3
             ];
           };
 
@@ -123,7 +123,7 @@
               '';
 
               meta = {
-                mainProgram = "gleam-template";
+                mainProgram = "gleam_template";
                 description = "gleam template";
                 license = licenses.mit;
                 platforms = platforms.all;
@@ -134,6 +134,10 @@
               };
             }
           );
+
+          burrito = pkgs.mkGleamBurrito {
+            src = self.packages.${system}.default;
+          };
         };
 
         # nix build #images.[...]
