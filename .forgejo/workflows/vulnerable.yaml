@@ -5,37 +5,42 @@ on:
     - cron: "0 9 * * 0" # every Sunday at 09:00 UTC
   workflow_dispatch:
 
-permissions:
-  contents: read
+# yaml-language-server-disable is not allowed
+enable-openid-connect: true
 
 jobs:
   actions:
+    # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
-    permissions:
-      id-token: write
     steps:
       - name: Initialize
         uses: spotdemo4/nix-init@3111d9c56193a4983beca8b41a2e0835678abcaa # v1.63.0
         with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_url: https://niks3.trev.zip
           shell: vulnerable
 
       - name: Run zizmor
-        run: zizmor $(find .github/workflows -name "*.yaml")
+        run: zizmor $(find .forgejo/workflows -name "*.yaml")
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
   nix:
+    # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
-    permissions:
-      id-token: write
     steps:
       - name: Initialize
         uses: spotdemo4/nix-init@3111d9c56193a4983beca8b41a2e0835678abcaa # v1.63.0
         with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_url: https://niks3.trev.zip
           shell: vulnerable
 
       - name: Run flake-checker
         run: flake-checker -f
 
   gleam:
+    # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
     permissions:
       id-token: write
@@ -43,6 +48,8 @@ jobs:
       - name: Initialize
         uses: spotdemo4/nix-init@3111d9c56193a4983beca8b41a2e0835678abcaa # v1.63.0
         with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_url: https://niks3.trev.zip
           shell: vulnerable
 
       - name: Run go_over

@@ -1,7 +1,7 @@
 # For a full reference of all the available options, you can have a look at
 # https://gleam.run/writing-gleam/gleam-toml/
 
-name = "template"
+name = "gleam_template"
 version = "0.3.0"
 description = "gleam template"
 licences = ["MIT"]
@@ -11,8 +11,8 @@ target = "erlang"
 
 [repository]
 type = "github"
-user = "spotdemo4"
-repo = "gleam-template"
+user = "template"
+repo = "gleam"
 
 [dependencies]
 gleam_stdlib = ">= 0.44.0 and < 2.0.0"

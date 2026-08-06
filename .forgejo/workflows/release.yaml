@@ -5,34 +5,34 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
-concurrency:
-  group: release
-
-permissions:
-  contents: read
+# yaml-language-server-disable is not allowed
+enable-openid-connect: true
 
 jobs:
-  release:
+  linux:
+    # zizmor: ignore[excessive-permissions]
     runs-on: ubuntu-24.04
-    permissions:
-      id-token: write
-      contents: write
-      packages: write
     steps:
       - name: Initialize
         uses: spotdemo4/nix-init@3111d9c56193a4983beca8b41a2e0835678abcaa # v1.63.0
         with:
+          token: ${{ secrets.DOCTOR_TOKEN }}
+          github_token: ${{ secrets.GH_TOKEN }}
+          niks3_url: https://niks3.trev.zip
           fetch_depth: 0
           shell: release
 
-      - name: Release to GitHub
+      - name: Release to Forgejo
         run: flake-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DOCTOR_TOKEN }}
+          REGISTRY: trev.zip
+          REGISTRY_PASSWORD: ${{ secrets.PACKAGE_TOKEN }}
+          DELETE_OLD_RELEASE_ARTIFACTS: true
           PACKAGES: |
+            appimages.x86_64-linux.default.x86_64-unknown-linux-gnu
             appimages.x86_64-linux.default.aarch64-unknown-linux-gnu
             appimages.x86_64-linux.default.armv7l-unknown-linux-gnueabihf
-            appimages.x86_64-linux.default.x86_64-unknown-linux-gnu
+            images.x86_64-linux.default.x86_64-unknown-linux-gnu
             images.x86_64-linux.default.aarch64-unknown-linux-gnu
             images.x86_64-linux.default.armv7l-unknown-linux-gnueabihf
-            images.x86_64-linux.default.x86_64-unknown-linux-gnu

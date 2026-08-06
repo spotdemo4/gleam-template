@@ -36,19 +36,20 @@
             packages = with pkgs; [
               # gleam
               gleam
-              erlang
+              beamPackages.erlang
               rebar3
 
-              # lint
-              nixd
-              nil
+              vscode-json-languageserver # json
+              yaml-language-server # yaml
+              tombi # toml
+              oxfmt # format
 
-              # format
-              oxfmt
+              # nix
+              nixd
               nixfmt
-              treefmt
 
               # util
+              treefmt
               bumper
               fix-hash
             ];
@@ -104,6 +105,8 @@
                 fileset = fileset.unions [
                   ./gleam.toml
                   ./manifest.toml
+                  ./LICENSE
+                  ./README.md
                   ./src
                   ./test
                 ];
@@ -118,19 +121,19 @@
               ];
 
               checkPhase = ''
-                gleam format --check
                 gleam check
                 gleam test
               '';
 
               meta = {
-                mainProgram = "template";
-                description = "A template for Gleam projects";
+                mainProgram = "gleam-template";
+                description = "gleam template";
                 license = licenses.mit;
                 platforms = platforms.all;
                 badPlatforms = [ systems.inspect.platformPatterns.isStatic ];
-                homepage = "https://github.com/spotdemo4/gleam-template";
-                changelog = "https://github.com/spotdemo4/gleam-template/releases/tag/v${final.version}";
+                homepage = "https://trev.zip/template/gleam";
+                changelog = "https://trev.zip/template/gleam/releases";
+                downloadPage = "https://trev.zip/template/gleam/releases/tag/v${final.version}";
               };
             }
           );
@@ -169,6 +172,21 @@
             '';
           };
 
+          gleamfmt = {
+            root = ./.;
+            filter = file: file.hasExt "gleam";
+            include = [
+              ./gleam.toml
+              ./manifest.toml
+            ];
+            packages = with pkgs; [
+              gleam
+            ];
+            script = ''
+              gleam format --check
+            '';
+          };
+
           nix = {
             root = ./.;
             filter = file: file.hasExt "nix";
@@ -180,7 +198,7 @@
             '';
           };
 
-          actions = {
+          actions-gh = {
             root = ./.github/workflows;
             filter = file: file.hasExt "yaml";
             packages = with pkgs; [
@@ -193,9 +211,33 @@
             '';
           };
 
-          renovate = {
+          actions-fj = {
+            root = ./.forgejo/workflows;
+            filter = file: file.hasExt "yaml";
+            packages = with pkgs; [
+              forgejo-runner
+              zizmor
+            ];
+            script = ''
+              forgejo-runner validate --workflow --path "$file"
+              zizmor --offline "$file"
+            '';
+          };
+
+          renovate-gh = {
             root = ./.github;
             files = ./.github/renovate.json;
+            packages = with pkgs; [
+              renovate
+            ];
+            script = ''
+              renovate-config-validator renovate.json
+            '';
+          };
+
+          renovate-fj = {
+            root = ./.forgejo;
+            files = ./.forgejo/renovate.json;
             packages = with pkgs; [
               renovate
             ];

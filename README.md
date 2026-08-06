@@ -1,9 +1,8 @@
 # gleam template
 
-[![check](https://img.shields.io/github/actions/workflow/status/spotdemo4/gleam-template/check.yaml?branch=main&logo=github&logoColor=%23bac2de&label=check&labelColor=%23313244)](https://github.com/spotdemo4/gleam-template/actions/workflows/check.yaml)
-[![vulnerable](https://img.shields.io/github/actions/workflow/status/spotdemo4/gleam-template/vulnerable.yaml?branch=main&logo=github&logoColor=%23bac2de&label=vulnerable&labelColor=%23313244)](https://github.com/spotdemo4/gleam-template/actions/workflows/vulnerable.yaml)
-[![gleam](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fspotdemo4%2Fgleam-template%2Frefs%2Fheads%2Fmain%2Fgleam.toml&query=%24.gleam&logo=gleam&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23FFAFF3)](https://gleam.run/)
-[![flakehub](https://img.shields.io/endpoint?url=https://flakehub.com/f/spotdemo4/gleam-template/badge&labelColor=%23313244)](https://flakehub.com/flake/spotdemo4/gleam-template)
+[![check](https://trev.zip/template/gleam/actions/workflows/check.yaml/badge.svg?branch=main&logo=forgejo&logoColor=%23bac2de&label=check&labelColor=%23313244)](https://trev.zip/template/gleam/actions?workflow=check.yaml)
+[![vulnerable](https://trev.zip/template/gleam/actions/workflows/vulnerable.yaml/badge.svg?branch=main&logo=forgejo&logoColor=%23bac2de&label=vulnerable&labelColor=%23313244)](https://trev.zip/template/gleam/actions?workflow=vulnerable.yaml)
+[![gleam](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Ftrev.zip%2Ftemplate%2Fgleam%2Fraw%2Fbranch%2Fmain%2Fgleam.toml&query=%24.gleam&logo=gleam&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23FFAFF3)](https://gleam.run/)
 
 template for starting [Gleam](https://gleam.run/) projects
 
@@ -15,59 +14,57 @@ part of [spotdemo4/templates](https://github.com/spotdemo4/templates)
 
 ## getting started
 
-```elm
+```sh
 nix develop
+./init.sh "Title" "Description"
 ```
 
 ### run
 
-```elm
-nix run #dev
+```sh
+gleam run
 ```
 
 ### format
 
-```elm
+```sh
 nix fmt
 ```
 
 ### check
 
-```elm
+```sh
 nix flake check
 ```
 
 ### build
 
-```elm
+```sh
 nix build
 ```
 
 ### release
 
-```elm
-bumper "README.md"
+```sh
+bumper
 ```
 
 releases are automatically created for [significant](https://www.conventionalcommits.org/en/v1.0.0/#summary) changes
 
 ## use
 
-### download
-
-| Architecture | Download                                                                                                                                        |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| amd64        | [gleam-template_0.3.0_amd64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.3.0/gleam-template_0.3.0_amd64.AppImage) |
-| arm64        | [gleam-template_0.3.0_arm64.AppImage](https://github.com/spotdemo4/gleam-template/releases/download/v0.3.0/gleam-template_0.3.0_arm64.AppImage) |
-
 ### docker
 
-```elm
-docker run ghcr.io/spotdemo4/gleam-template:0.3.0
+```sh
+docker run trev.zip/template/gleam:latest
 ```
 
 ### nix
 
-```elm
-nix run github:spotdemo4/gleam-template
+```sh
+nix run git+https://trev.zip/template/gleam.git
 ```
+
+### download
+
+https://trev.zip/template/gleam/releases
