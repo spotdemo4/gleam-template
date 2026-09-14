@@ -122,6 +122,12 @@
                 runHook postCheck
               '';
 
+              installCheckPhase = ''
+                runHook preInstallCheck
+                test "$("$out/bin/gleam_template")" = "Hello, world!"
+                runHook postInstallCheck
+              '';
+
               meta = {
                 mainProgram = "gleam_template";
                 description = "gleam template";
@@ -166,12 +172,7 @@
 
         # nix flake check
         checks = pkgs.mkChecks {
-          gleam = self.packages.${system}.default.overrideAttrs {
-            dontBuild = true;
-            installPhase = ''
-              touch $out
-            '';
-          };
+          gleam = self.packages.${system}.default;
 
           gleamfmt = {
             root = ./.;
