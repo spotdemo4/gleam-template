@@ -140,10 +140,6 @@
               };
             }
           );
-
-          burrito = pkgs.mkGleamBurrito {
-            src = self.packages.${system}.default;
-          };
         };
 
         # nix build #images.[...]

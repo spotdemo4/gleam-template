@@ -30,5 +30,6 @@ jobs:
           REGISTRY_PASSWORD: ${{ secrets.PACKAGE_TOKEN }}
           DELETE_OLD_RELEASE_ARTIFACTS: true
           PACKAGES: |
-            packages.x86_64-linux.burrito.x86_64-unknown-linux-gnu
+            packages.x86_64-linux.default.x86_64-unknown-linux-gnu
             images.x86_64-linux.default.x86_64-unknown-linux-gnu
+            appimages.x86_64-linux.default.x86_64-unknown-linux-gnu
