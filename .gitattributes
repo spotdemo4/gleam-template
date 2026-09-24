@@ -1,6 +1,9 @@
 # Gleam template - Git attributes
 # https://git-scm.com/docs/gitattributes
 
+# Linguist: exclude template initializer from language stats
+/init.sh -linguist-detectable
+
 # Linguist: lock files are generated
 flake.lock linguist-generated=true
 manifest.toml linguist-generated=true
