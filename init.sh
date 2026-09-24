@@ -181,7 +181,8 @@ old_description='gleam template'
 old_url=https://trev.zip/template/gleam
 replace_literal "$old_slug" "$slug" flake.nix
 replace_literal "$old_module" "$module" gleam.toml
-replace_literal '0.3.0' "$version" gleam.toml flake.nix
+sed -i -E "1,/^\[/s@^(version = \")[^\"]*@\1$version@" gleam.toml
+sed -i -E "/^[[:space:]]*pname = \"$slug\";$/,/^[[:space:]]*version = /s@^([[:space:]]*version = \")[^\"]*@\1$version@" flake.nix
 if [[ -f src/$old_module.gleam && $old_module != "$module" ]]; then
   mv "src/$old_module.gleam" "src/$module.gleam"
 fi
