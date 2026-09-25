@@ -10,7 +10,20 @@
 nix develop
 ```
 
+with [direnv](https://direnv.net/):
+
+```sh
+ln -s .envrc.project .envrc
+direnv allow
+```
+
 ### run
+
+```sh
+nix run
+```
+
+with [gleam](https://gleam.run/):
 
 ```sh
 gleam run
@@ -22,10 +35,23 @@ gleam run
 nix fmt
 ```
 
+with [gleam](https://gleam.run/):
+
+```sh
+gleam format
+```
+
 ### check
 
 ```sh
 nix flake check
+```
+
+with [gleam](https://gleam.run/):
+
+```sh
+gleam check
+gleam test
 ```
 
 ### build
@@ -34,7 +60,15 @@ nix flake check
 nix build
 ```
 
+with [gleam](https://gleam.run/):
+
+```sh
+gleam build
+```
+
 ### release
+
+with [bumper](https://trev.zip/llc/bumper):
 
 ```sh
 bumper
