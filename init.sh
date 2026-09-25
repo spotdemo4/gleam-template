@@ -208,11 +208,16 @@ else
   vulnerable_badge="[![vulnerable](${web_url}/actions/workflows/vulnerable.yaml/badge.svg?branch=main&logo=forgejo&logoColor=%23bac2de&label=vulnerable&labelColor=%23313244)](${web_url}/actions?workflow=vulnerable.yaml)"
 fi
 
+# The validated raw URL only needs colons and slashes double-encoded for Shields.
+encoded_lock_url="${raw_url}/flake.lock"
+encoded_lock_url=${encoded_lock_url//:/%253A}
+encoded_lock_url=${encoded_lock_url//\//%252F}
+nixpkgs_badge="[![nixpkgs](https://img.shields.io/endpoint?url=https%3A%2F%2Fnix-shield.trev.zip%2Fbadge%3Furl%3D${encoded_lock_url}%26input%3Dnixpkgs&logoColor=%23bac2de&labelColor=%23313244&color=%235277C3)](https://nixos.org/)"
 language_badge="[![gleam](https://img.shields.io/badge/dynamic/toml?url=${raw_url}/gleam.toml&query=%24.gleam&logo=gleam&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23FFAFF3)](https://gleam.run/)"
 
 {
   printf '# %s\n\n' "$title"
-  printf '%s\n%s\n%s\n\n' "$check_badge" "$vulnerable_badge" "$language_badge"
+  printf '%s\n%s\n%s\n%s\n\n' "$check_badge" "$vulnerable_badge" "$nixpkgs_badge" "$language_badge"
   printf '%s\n' "$description"
 } >README.md
 
