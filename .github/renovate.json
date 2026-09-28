@@ -10,17 +10,19 @@
 
   // repository
   "extends": ["config:recommended"],
+  "addLabels": ["dep"],
+  "nix": {
+    "enabled": true
+  },
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
     "schedule": ["* * * * 0"], // sunday
+    "skipInstalls": false,
     "postUpgradeTasks": {
       "commands": ["fix-hash .#default"],
       "executionMode": "branch"
     }
-  },
-  "nix": {
-    "enabled": true
   },
   "packageRules": [
     {
@@ -29,14 +31,15 @@
     },
     {
       "matchManagers": ["nix"],
-      "groupName": "nix inputs"
+      "addLabels": ["nix"]
     },
     {
       "matchManagers": ["github-actions"],
-      "groupName": "github actions"
+      "addLabels": ["actions"]
     },
     {
       "matchManagers": ["gleam"],
+      "addLabels": ["gleam"],
       "postUpgradeTasks": {
         "commands": ["fix-hash .#default"],
         "executionMode": "branch"

@@ -49,7 +49,7 @@
     {
       "matchManagers": ["gleam"],
       "matchUpdateTypes": ["minor", "patch"],
-      "addLabels": ["gleam"]
+      "groupName": "hex packages"
     }
   ]
 }
