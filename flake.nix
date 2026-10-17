@@ -124,7 +124,7 @@
 
               installCheckPhase = ''
                 runHook preInstallCheck
-                test "$("$out/bin/gleam_template")" = "Hello, world!"
+                test "$("$out/bin/${final.meta.mainProgram}")" = "Hello, world!"
                 runHook postInstallCheck
               '';
 
@@ -153,6 +153,25 @@
         appimages = {
           default = pkgs.mkAppImage {
             src = self.packages.${system}.default;
+          };
+        };
+
+        # nix flake init -t git+https://trev.zip/template/gleam
+        templates = {
+          default = {
+            path = ./.;
+            description = "gleam template";
+            welcomeText = ''
+              # gleam template
+
+              `init.sh` requires a git repository with an `origin` remote:
+
+              ```sh
+              git init
+              git remote add origin <url>
+              bash init.sh "Title" "Description"
+              ```
+            '';
           };
         };
 
