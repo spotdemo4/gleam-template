@@ -117,7 +117,6 @@
 
               checkPhase = ''
                 runHook preCheck
-                gleam check
                 gleam test
                 runHook postCheck
               '';
@@ -189,18 +188,11 @@
         checks = pkgs.mkChecks {
           gleam = self.packages.${system}.default;
 
-          gleamfmt = {
-            root = ./.;
-            filter = file: file.hasExt "gleam";
-            include = [
-              ./gleam.toml
-              ./manifest.toml
-            ];
-            packages = with pkgs; [
-              gleam
-            ];
+          gleam-lint = {
+            src = self.packages.${system}.default;
             script = ''
               gleam format --check
+              gleam check
             '';
           };
 
