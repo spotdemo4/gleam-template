@@ -105,12 +105,14 @@
                 ];
               };
 
+              doCheck = true;
               checkPhase = ''
                 runHook preCheck
                 gleam test
                 runHook postCheck
               '';
 
+              doInstallCheck = true;
               installCheckPhase = ''
                 runHook preInstallCheck
                 test "$("$out/bin/${final.meta.mainProgram}")" = "Hello, world!"
