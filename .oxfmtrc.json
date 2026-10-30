@@ -1,3 +1,11 @@
 {
-  "ignorePatterns": ["manifest.toml"]
+  "ignorePatterns": ["manifest.toml"],
+  "overrides": [
+    {
+      "files": ["*.jsonc"],
+      "options": {
+        "trailingComma": "none"
+      }
+    }
+  ]
 }
