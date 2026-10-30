@@ -124,8 +124,10 @@
                 platforms = platforms.all;
                 badPlatforms = [ systems.inspect.platformPatterns.isStatic ];
                 homepage = "https://trev.zip/template/gleam";
-                changelog = "https://trev.zip/template/gleam/releases";
-                downloadPage = "https://trev.zip/template/gleam/releases/tag/v${final.version}";
+                downloadPage = "https://trev.zip/template/gleam/releases";
+                changelog = "https://trev.zip/template/gleam/releases/tag/v${final.version}";
+                sourceProvenance = [ sourceTypes.fromSource ];
+                maintainers = [ maintainers.spotdemo4 ];
               };
             }
           );
