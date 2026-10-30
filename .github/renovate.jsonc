@@ -6,7 +6,6 @@
   "requireConfig": "ignored",
   "platform": "github",
   "repositories": ["spotdemo4/gleam-template"],
-  "allowedCommands": ["^fix-hash \\.#default$"],
 
   // repository
   "extends": ["config:recommended"],
@@ -18,11 +17,7 @@
     "enabled": true,
     "automerge": true,
     "schedule": ["* * * * 0"], // sunday
-    "skipInstalls": false,
-    "postUpgradeTasks": {
-      "commands": ["fix-hash .#default"],
-      "executionMode": "branch"
-    }
+    "skipInstalls": false
   },
   "packageRules": [
     {
@@ -44,11 +39,7 @@
     },
     {
       "matchManagers": ["gleam"],
-      "addLabels": ["gleam"],
-      "postUpgradeTasks": {
-        "commands": ["fix-hash .#default"],
-        "executionMode": "branch"
-      }
+      "addLabels": ["gleam"]
     },
     {
       "matchManagers": ["gleam"],

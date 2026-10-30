@@ -51,7 +51,6 @@
               # util
               treefmt
               bumper
-              fix-hash
             ];
           };
 
@@ -70,7 +69,6 @@
           update = pkgs.mkShell {
             packages = with pkgs; [
               renovate
-              fix-hash # gleamDeps
 
               # gleam
               gleam
@@ -90,7 +88,7 @@
 
         # nix build [#...]
         packages = {
-          default = pkgs.stdenv.mkDerivation (
+          default = pkgs.mkGleamPackage (
             final: with pkgs.lib; {
               pname = "gleam-template";
               version = "0.8.1";
@@ -106,14 +104,6 @@
                   ./test
                 ];
               };
-
-              gleamDeps = pkgs.gleamFetchDeps {
-                inherit (final) pname version src;
-                hash = "sha256-tIjoWZ3iXfOZMU1+VW1Mlv533equhNxQH+Lh6uZOK4I=";
-              };
-              nativeBuildInputs = with pkgs; [
-                gleamErlangHook
-              ];
 
               checkPhase = ''
                 runHook preCheck
@@ -257,7 +247,13 @@
 
           config = {
             root = ./.;
-            filter = file: file.hasExt "json" || file.hasExt "jsonc" || file.hasExt "yaml" || file.hasExt "toml" || file.hasExt "md";
+            filter =
+              file:
+              file.hasExt "json"
+              || file.hasExt "jsonc"
+              || file.hasExt "yaml"
+              || file.hasExt "toml"
+              || file.hasExt "md";
             packages = with pkgs; [
               oxfmt
             ];
