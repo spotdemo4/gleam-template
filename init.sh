@@ -99,15 +99,6 @@ nix_string() {
   printf '%s\n' "$value"
 }
 
-# Prints a value escaped for a double-quoted TOML string.
-toml_string() {
-  local value=$1
-  # shellcheck disable=SC1003
-  value=${value//'\'/'\\'}
-  value=${value//'"'/'\"'}
-  printf '%s\n' "$value"
-}
-
 # Replaces every occurrence of old with new in the given files.
 replace_literal() {
   local old=$1 new=$2 file content
@@ -179,6 +170,10 @@ check_repository() {
 check_project() {
   if [[ $title =~ [[:cntrl:]] || $description =~ [[:cntrl:]] ]]; then
     die 'Title and description cannot contain control characters.'
+  fi
+  # Gleam writes the description into the Erlang .app file without escaping it
+  if [[ $description == *[\"\\]* ]]; then
+    die 'Description cannot contain double quotes or backslashes.'
   fi
   slug=$(slugify "$title")
   package=$(gleam_package "$slug")
@@ -296,7 +291,10 @@ apply_metadata() {
   fi
   replace_literal "$old_description" "$(nix_string "$description")" flake.nix
   replace_literal "$old_url" "$web_url" flake.nix
-  replace_literal "$old_description" "$(toml_string "$description")" gleam.toml
+  replace_literal "$old_description" "$description" gleam.toml
+  if ! $is_github; then
+    replace_literal 'type = "github"' "type = \"forgejo\""$'\n'"host = \"${web_url%/"$repo_path"}\"" gleam.toml
+  fi
   replace_literal 'user = "template"' "user = \"$owner\"" gleam.toml
   replace_literal 'repo = "gleam"' "repo = \"$repo\"" gleam.toml
   replace_literal 'Copyright (c) 2026 trev' "Copyright (c) $year $git_name" LICENSE
@@ -380,7 +378,8 @@ write_readme() {
 
   if $is_library; then
     readme_sections=$(sed -n '/^## contributing$/,$p' README.md)
-    printf -v readme_sections '## using\n\n```sh\ngleam add %s\n```\n\n%s' "$package" "$readme_sections"
+    printf -v readme_sections '## using\n\n```toml\n# gleam.toml\n[dependencies]\n%s = { git = "%s.git", ref = "main" }\n```\n\n%s' \
+      "$package" "$web_url" "$readme_sections"
   else
     if $is_github; then
       image="ghcr.io/${repo_path,,}:latest"

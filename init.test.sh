@@ -102,10 +102,6 @@ test_nix_string() {
   assert_eq "$(nix_string 'Say "hi" to ${USER} \o/')" 'Say \"hi\" to \${USER} \\o/' nix_string
 }
 
-test_toml_string() {
-  assert_eq "$(toml_string 'Say "hi" to ${USER} \o/')" 'Say \"hi\" to ${USER} \\o/' toml_string
-}
-
 # Creates the template's upstream repository, which init.sh fetches to find the
 # template commit.
 create_upstream() {
@@ -140,8 +136,19 @@ assert_initialized() {
   assert_contains LICENSE "Copyright (c) $(date +%Y) Test User"
 }
 
+# Tests and checks the formatting of the project in the current directory.
+gleam_test() {
+  # The build sandbox can't download the dependencies
+  if [[ -v GLEAM_DEPS ]]; then
+    cp -Tr "$GLEAM_DEPS" build
+    chmod -R +w build
+  fi
+  gleam test
+  gleam format --check
+}
+
 test_application() (
-  local project=$tmp/hello-world description='Says "hi" to ${USER} \o/'
+  local project=$tmp/hello-world description='Says hi to ${USER}'
   new_project "$project" git@github.com:octo/hello-world.git
   cd "$project"
   # "use this template" creates a new commit with the template's tree
@@ -159,10 +166,11 @@ test_application() (
     'docker run ghcr.io/octo/hello-world:latest' \
     'https://github.com/octo/hello-world/releases'
   assert_contains gleam.toml \
-    'description = "Says \"hi\" to ${USER} \\o/"' \
-    'user = "octo"' 'repo = "hello-world"'
+    'description = "Says hi to ${USER}"' \
+    'type = "github"' 'user = "octo"' 'repo = "hello-world"'
+  assert_lacks gleam.toml 'host = '
   assert_contains flake.nix \
-    'description = "Says \"hi\" to \${USER} \\o/";' \
+    'description = "Says hi to \${USER}";' \
     'mainProgram = "hello_world";' \
     'homepage = "https://github.com/octo/hello-world";' \
     'actions-gh = {' 'actions-fj = {' \
@@ -174,6 +182,7 @@ test_application() (
     '"repositories": ["octo/hello-world"]'
   assert_contains src/hello_world.gleam 'pub fn main'
   [[ -d .zed && -d .vscode ]] || fail 'application files are missing'
+  gleam_test
 )
 
 test_library() (
@@ -197,8 +206,9 @@ test_library() (
   assert_lacks gleam.toml gleam_stdlib
   assert_lacks manifest.toml 'gleam_stdlib = {'
   assert_contains manifest.toml 'name = "gleam_stdlib"'
-  assert_contains README.md 'gleam add hello_lib'
-  assert_lacks README.md 'docker run' 'nix run'
+  assert_contains gleam.toml 'type = "forgejo"' 'host = "https://git.example.com"' 'user = "octo"' 'repo = "hello-lib"'
+  assert_contains README.md 'hello_lib = { git = "https://git.example.com/octo/hello-lib.git", ref = "main" }'
+  assert_lacks README.md 'gleam add' 'docker run' 'nix run'
   assert_lacks flake.nix mainProgram downloadPage installCheckPhase 'images = {' 'appimages = {'
   for workflow in .github/workflows/release.yaml .forgejo/workflows/release.yaml; do
     assert_contains "$workflow" 'packages.x86_64-linux.default.x86_64-unknown-linux-gnu'
@@ -207,14 +217,7 @@ test_library() (
   assert_lacks .github/workflows/release.yaml 'packages: write'
   assert_lacks .forgejo/workflows/release.yaml CONTAINER_REGISTRY_PASSWORD
   assert_lacks CONTRIBUTING.md '### run'
-
-  # The build sandbox can't download the dependencies
-  if [[ -v GLEAM_DEPS ]]; then
-    cp -Tr "$GLEAM_DEPS" build
-    chmod -R +w build
-  fi
-  gleam test
-  gleam format --check
+  gleam_test
 )
 
 test_rollback() (
@@ -229,6 +232,11 @@ test_rollback() (
   assert_fails 'Commit or discard all existing worktree changes before running the initializer.' \
     bash ./init.sh Rollback Rollback </dev/null
   rm untracked
+
+  assert_fails 'Description cannot contain double quotes or backslashes.' \
+    bash ./init.sh Rollback 'Says "hi"' </dev/null
+  assert_fails 'Description cannot contain double quotes or backslashes.' \
+    bash ./init.sh Rollback 'Says hi \o/' </dev/null
 
   # The Forgejo URL is read after the template has been changed
   assert_fails 'Unsupported repository URL.' \
@@ -249,7 +257,7 @@ chmod +x "$tmp/bin/nix"
 PATH=$tmp/bin:$PATH
 
 create_upstream
-for test in test_parse_remote test_slugify test_gleam_package test_nix_string test_toml_string test_application test_library test_rollback; do
+for test in test_parse_remote test_slugify test_gleam_package test_nix_string test_application test_library test_rollback; do
   "$test"
   printf 'ok: %s\n' "$test"
 done
