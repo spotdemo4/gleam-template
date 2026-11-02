@@ -190,6 +190,24 @@
             '';
           };
 
+          init = {
+            root = ./.;
+            packages = with pkgs; [
+              git
+              gleam
+              beamPackages.erlang
+              jq
+              shellcheck
+              self.formatter.${system}
+            ];
+            # The sandbox can't download the dependencies
+            env.GLEAM_DEPS = self.packages.${system}.default.gleamDeps;
+            script = ''
+              shellcheck init.sh init.test.sh
+              bash init.test.sh
+            '';
+          };
+
           nix = {
             root = ./.;
             filter = file: file.hasExt "nix";
