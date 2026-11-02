@@ -80,7 +80,19 @@ if [[ ! $slug =~ ^[a-z][a-z0-9-]*$ ]]; then
   printf 'Title must produce a package name beginning with a letter.\n' >&2
   exit 1
 fi
-module=${slug//-/_}
+
+# Gleam package names can't be reserved words or the names of Erlang modules
+package=${slug//-/_}
+case $package in
+  as | assert | auto | case | const | delegate | derive | echo | else | fn | if | implement | import | let | macro | opaque | panic | pub | test | todo | type | use | \
+    receive | bnot | div | rem | band | bor | bxor | bsl | bsr | not | and | or | xor | orelse | andalso | when | end | fun | try | catch | after | begin | query | cond | of | maybe | \
+    gleam | array | base64 | beam_lib | binary | c | calendar | dets | dict | digraph | digraph_utils | epp | erl_anno | erl_eval | erl_expand_records | erl_id_trans | erl_internal | erl_lint | erl_parse | erl_pp | erl_scan | erl_tar | ets | file_sorter | filelib | filename | gb_sets | gb_trees | \
+    gen_event | gen_fsm | gen_server | gen_statem | io | io_lib | lists | log_mf_h | maps | math | ms_transform | orddict | ordsets | pool | proc_lib | proplists | qlc | queue | rand | random | re | sets | shell | shell_default | shell_docs | slave | sofs | string | supervisor | supervisor_bridge | \
+    sys | timer | unicode | uri_string | user_default | win32reg | zip)
+    printf 'Title must produce a Gleam package name that is not reserved.\n' >&2
+    exit 1
+    ;;
+esac
 
 remote=$(git remote get-url origin 2>/dev/null) || {
   printf 'Unable to read the origin remote.\n' >&2
@@ -187,7 +199,7 @@ escaped_description=$(escape_string "$description")
 nix_description=$(printf '%s' "$escaped_description" | sed 's/${/\\${/g')
 
 old_slug=gleam-template
-old_module=gleam_template
+old_package=gleam_template
 old_description='gleam template'
 old_url=https://trev.zip/template/gleam
 
@@ -211,25 +223,36 @@ if GIT_TERMINAL_PROMPT=0 git fetch --quiet --no-tags "$old_url" main 2>/dev/null
   done < <(git log --format='%T' HEAD)
 fi
 
+read -r -p 'Is this project a library? [y/N] ' reply || reply=
+if [[ $reply =~ ^[Yy]([Ee][Ss])?$ ]]; then
+  is_library=true
+else
+  is_library=false
+fi
+
 changes_started=true
 rm template.schema.json
 sed -i '/^        # nix flake init /,/^        };$/d' flake.nix
 if [[ -n $template_commit ]]; then
-  printf '{ "$schema": "%s", "url": "%s", "commit": "%s" }\n' \
-    "$old_url/raw/branch/main/template.schema.json" "$old_url" "$template_commit" >.template.json
+  library_field=
+  if $is_library; then
+    library_field=', "library": true'
+  fi
+  printf '{ "$schema": "%s", "url": "%s", "commit": "%s"%s }\n' \
+    "$old_url/raw/branch/main/template.schema.json" "$old_url" "$template_commit" "$library_field" >.template.json
 else
   printf 'Warning: unable to find the template commit; .template.json was not created.\n' >&2
 fi
 
 replace_literal "$old_slug" "$slug" flake.nix
-replace_literal "$old_module" "$module" gleam.toml flake.nix
+replace_literal "$old_package" "$package" gleam.toml flake.nix
 sed -i -E "1,/^\[/s@^(version = \")[^\"]*@\1$version@" gleam.toml
 sed -i -E "/^[[:space:]]*pname = \"$slug\";$/,/^[[:space:]]*version = /s@^([[:space:]]*version = \")[^\"]*@\1$version@" flake.nix
-if [[ -f src/$old_module.gleam && $old_module != "$module" ]]; then
-  mv "src/$old_module.gleam" "src/$module.gleam"
+if [[ -f src/$old_package.gleam && $old_package != "$package" ]]; then
+  mv "src/$old_package.gleam" "src/$package.gleam"
 fi
-if [[ -f test/${old_module}_test.gleam && $old_module != "$module" ]]; then
-  mv "test/${old_module}_test.gleam" "test/${module}_test.gleam"
+if [[ -f test/${old_package}_test.gleam && $old_package != "$package" ]]; then
+  mv "test/${old_package}_test.gleam" "test/${package}_test.gleam"
 fi
 replace_literal "$old_description" "$nix_description" flake.nix
 replace_literal "$old_url" "$web_url" flake.nix
@@ -237,6 +260,52 @@ replace_literal "$old_description" "$escaped_description" gleam.toml
 replace_literal 'user = "template"' "user = \"$owner\"" gleam.toml
 replace_literal 'repo = "gleam"' "repo = \"$repo\"" gleam.toml
 replace_literal 'Copyright (c) 2026 trev' "Copyright (c) $year $git_name" LICENSE
+
+if $is_library; then
+  # A library starts without the program or its dependencies.
+  cat >"src/$package.gleam" <<'EOF'
+//// Says hello.
+
+/// Returns a greeting for `name`.
+pub fn hello(name: String) -> String {
+  "Hello, " <> name <> "!"
+}
+EOF
+  cat >"test/${package}_test.gleam" <<EOF
+import gleeunit
+import $package
+
+pub fn main() -> Nil {
+  gleeunit.main()
+}
+
+// gleeunit test functions end in \`_test\`
+pub fn hello_test() {
+  assert $package.hello("world") == "Hello, world!"
+}
+EOF
+  sed -i '/^gleam_stdlib = /d' gleam.toml
+  sed -i '/^gleam_stdlib = { version = /d' manifest.toml
+
+  # There's no program to run or put in an image.
+  sed -i "/^              doInstallCheck = true;\$/,/^              '';\$/d" flake.nix
+  sed -i -E '/^                (mainProgram|downloadPage) = /d' flake.nix
+  sed -i -E '/^        # nix build #(app)?images/,/^        };$/d' flake.nix
+  sed -i '/^### run$/,/^### format$/{/^### format$/!d}' CONTRIBUTING.md
+
+  # Hex isn't a release target, so the release only archives the package.
+  for workflow in .github/workflows/release.yaml .forgejo/workflows/release.yaml; do
+    if [[ -f $workflow ]]; then
+      sed -i -E '/^            (images|appimages)\.x86_64-linux\.default\./d' "$workflow"
+    fi
+  done
+  if [[ -f .github/workflows/release.yaml ]]; then
+    sed -i '/^      packages: write$/d' .github/workflows/release.yaml
+  fi
+  if [[ -f .forgejo/workflows/release.yaml ]]; then
+    sed -i '/^          CONTAINER_REGISTRY_PASSWORD: /d' .forgejo/workflows/release.yaml
+  fi
+fi
 
 if [[ ${provider_host,,} == github.com ]]; then
   is_github=true
@@ -257,14 +326,19 @@ encoded_lock_url=${encoded_lock_url//\//%252F}
 nixpkgs_badge="[![nixpkgs](https://img.shields.io/endpoint?url=https%3A%2F%2Fnix-shield.trev.zip%2Fbadge%3Furl%3D${encoded_lock_url}%26input%3Dnixpkgs&logoColor=%23bac2de&labelColor=%23313244&color=%235277C3)](https://nixos.org/)"
 language_badge="[![gleam](https://img.shields.io/badge/dynamic/toml?url=${raw_url}/gleam.toml&query=%24.gleam&logo=gleam&logoColor=%23bac2de&label=version&labelColor=%23313244&color=%23FFAFF3)](https://gleam.run/)"
 
-readme_sections=$(sed -n '/^## using$/,$p' README.md)
-readme_sections=${readme_sections//"$old_url"/"$web_url"}
-if $is_github; then
-  image="ghcr.io/${repo_path,,}:latest"
+if $is_library; then
+  readme_sections=$(sed -n '/^## contributing$/,$p' README.md)
+  printf -v readme_sections '## using\n\n```sh\ngleam add %s\n```\n\n%s' "$package" "$readme_sections"
 else
-  image="$host/${repo_path,,}:latest"
+  readme_sections=$(sed -n '/^## using$/,$p' README.md)
+  readme_sections=${readme_sections//"$old_url"/"$web_url"}
+  if $is_github; then
+    image="ghcr.io/${repo_path,,}:latest"
+  else
+    image="$host/${repo_path,,}:latest"
+  fi
+  readme_sections=${readme_sections//trev.zip\/template\/gleam:latest/"$image"}
 fi
-readme_sections=${readme_sections//trev.zip\/template\/gleam:latest/"$image"}
 
 {
   printf '# %s\n\n' "$title"
