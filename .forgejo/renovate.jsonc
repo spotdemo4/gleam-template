@@ -14,6 +14,14 @@
   "nix": {
     "enabled": true
   },
+  // fix PRs for vulnerable direct dependencies, from osv.dev.
+  // transitive vulnerabilities are reported by the vulnerable workflow
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboardOSVVulnerabilitySummary": "unresolved",
+  "vulnerabilityAlerts": {
+    "addLabels": ["security"],
+    "automerge": true
+  },
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
