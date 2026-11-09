@@ -48,12 +48,8 @@
     },
     {
       "matchManagers": ["gleam"],
-      "addLabels": ["gleam"]
-    },
-    {
-      "matchManagers": ["gleam"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "hex packages"
+      "addLabels": ["gleam"],
+      "rangeStrategy": "update-lockfile"
     }
   ]
 }
