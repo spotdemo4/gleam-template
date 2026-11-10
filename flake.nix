@@ -91,7 +91,7 @@
           default = pkgs.mkGleamPackage (
             final: with pkgs.lib; {
               pname = "gleam-template";
-              version = "0.11.0";
+              version = "0.12.0";
 
               src = fileset.toSource {
                 root = ./.;
