@@ -180,8 +180,6 @@
 
         # nix flake check
         checks = pkgs.mkChecks {
-          gleam = self.packages.${system}.default;
-
           gleam-lint = {
             src = self.packages.${system}.default;
             script = ''
