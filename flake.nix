@@ -32,7 +32,7 @@
         # nix develop [#...]
         devShells = {
           default = pkgs.mkShell {
-            shellHook = pkgs.shellhook.ref;
+            shellHook = pkgs.trev.shellhook.ref;
             packages = with pkgs; [
               # gleam
               gleam
@@ -50,25 +50,25 @@
 
               # util
               treefmt
-              bumper
+              trev.bumper
             ];
           };
 
           bump = pkgs.mkShell {
             packages = with pkgs; [
-              bumper
+              trev.bumper
             ];
           };
 
           release = pkgs.mkShell {
             packages = with pkgs; [
-              flake-release
+              trev.flake-release
             ];
           };
 
           update = pkgs.mkShell {
             packages = with pkgs; [
-              renovate
+              trev.renovate
 
               # gleam
               gleam
@@ -79,7 +79,7 @@
 
           vulnerable = pkgs.mkShell {
             packages = with pkgs; [
-              go-over # gleam
+              trev.go-over # gleam
               flake-checker # nix
               zizmor # actions
             ];
@@ -88,7 +88,7 @@
 
         # nix build [#...]
         packages = {
-          default = pkgs.mkGleamPackage (
+          default = pkgs.trev.libs.mkGleamPackage (
             final: with pkgs.lib; {
               pname = "gleam-template";
               version = "0.13.0";
@@ -137,14 +137,14 @@
 
         # nix build #images.[...]
         images = {
-          default = pkgs.mkImage {
+          default = pkgs.trev.libs.mkImage {
             src = self.packages.${system}.default;
           };
         };
 
         # nix build #appimages.[...]
         appimages = {
-          default = pkgs.mkAppImage {
+          default = pkgs.trev.libs.mkAppImage {
             src = self.packages.${system}.default;
           };
         };
@@ -179,7 +179,7 @@
         };
 
         # nix flake check
-        checks = pkgs.mkChecks {
+        checks = pkgs.trev.libs.mkChecks {
           gleam-lint = {
             src = self.packages.${system}.default;
             script = ''
@@ -262,7 +262,7 @@
             root = ./.github;
             files = ./.github/renovate.jsonc;
             packages = with pkgs; [
-              renovate
+              trev.renovate
             ];
             script = ''
               renovate-config-validator renovate.jsonc
@@ -273,7 +273,7 @@
             root = ./.forgejo;
             files = ./.forgejo/renovate.jsonc;
             packages = with pkgs; [
-              renovate
+              trev.renovate
             ];
             script = ''
               renovate-config-validator renovate.jsonc
@@ -284,7 +284,7 @@
             root = ./.gitea;
             files = ./.gitea/renovate.jsonc;
             packages = with pkgs; [
-              renovate
+              trev.renovate
             ];
             script = ''
               renovate-config-validator renovate.jsonc
