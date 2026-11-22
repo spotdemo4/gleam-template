@@ -174,9 +174,9 @@ test_application() (
   git commit --quiet --message 'Initial commit'
   # The build sandbox has no /usr/bin/env for the shebang
   # GitHub (detected), application, no Gitea, Forgejo mirror, Tangled mirror,
-  # Zed, VS Code, Claude Code
+  # Zed, VS Code, Claude Code, T3 Code
   printf '%s\n' '' n n y https://git.example.com/octo/hello-world \
-    y octo.example.com@knot.example.com:did:plc:abcdefghijklmnopqrstuvwx '' '' '' |
+    y octo.example.com@knot.example.com:did:plc:abcdefghijklmnopqrstuvwx '' '' '' '' |
     bash ./init.sh 'Hello World' "$description"
 
   assert_initialized hello_world hello-world test@example.com
@@ -206,7 +206,7 @@ test_application() (
     '"endpoint": "https://git.example.com/api/v1"' \
     '"repositories": ["octo/hello-world"]'
   assert_contains src/hello_world.gleam 'pub fn main'
-  [[ -d .zed && -d .vscode ]] || fail 'application files are missing'
+  [[ -d .zed && -d .vscode && -f t3.json ]] || fail 'application files are missing'
   assert_eq "$(git ls-files .claude)" .claude/skills 'tracked .claude files'
   assert_eq "$(readlink .claude/skills)" ../.agents/skills '.claude/skills target'
   gleam_test
@@ -221,9 +221,9 @@ test_library() (
   # The template's author keeps their maintainer entry
   git config user.email Me@Trev.xyz
   # Forgejo (detected), library, GitHub, Gitea and Tangled mirrors, no Zed, no
-  # VS Code, no Claude Code
+  # VS Code, no Claude Code, no T3 Code
   printf '%s\n' '' y y https://github.com/octo/hello-lib y https://gitea.example.com/octo/hello-lib \
-    y https://tangled.org/@octo.example.com/hello-lib n n n |
+    y https://tangled.org/@octo.example.com/hello-lib n n n n |
     bash init.sh 'Hello Lib' 'Says hello'
 
   assert_initialized hello_lib hello-lib Me@Trev.xyz
@@ -235,7 +235,7 @@ test_library() (
   assert_contains .gitea/renovate.jsonc \
     '"endpoint": "https://gitea.example.com/api/v1"' \
     '"repositories": ["octo/hello-lib"]'
-  assert_missing .zed .vscode .claude
+  assert_missing .zed .vscode .claude t3.json
   [[ -f .agents/skills/template-sync/SKILL.md ]] || fail '.agents/skills is missing'
   assert_contains src/hello_lib.gleam '//// Says hello.' 'pub fn hello(name: String) -> String {'
   assert_lacks src/hello_lib.gleam 'pub fn main'
@@ -265,13 +265,13 @@ test_gitea() (
   git add -A
   git commit --quiet --message 'Initial commit'
   # Gitea, application, GitHub mirror, no Forgejo, no Tangled, no Zed, no VS
-  # Code, no Claude Code
-  printf '%s\n' Gitea n y git@github.com:octo/hello-mirror.git n n n n n | bash ./init.sh 'Hello Gitea' 'Says hello'
+  # Code, no Claude Code, no T3 Code
+  printf '%s\n' Gitea n y git@github.com:octo/hello-mirror.git n n n n n n | bash ./init.sh 'Hello Gitea' 'Says hello'
 
   assert_initialized hello_gitea hello-gitea test@example.com
   assert_eq "$(git remote)" $'github\norigin' remotes
   assert_eq "$(git remote get-url github)" git@github.com:octo/hello-mirror.git 'github remote'
-  assert_missing .forgejo .tangled .zed .vscode .claude
+  assert_missing .forgejo .tangled .zed .vscode .claude t3.json
   assert_contains README.md \
     'https://gitea.example.com/octo/hello-gitea/actions?workflow=check.yaml' \
     'logo=gitea' \
